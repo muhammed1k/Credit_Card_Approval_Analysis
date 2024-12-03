@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Submission</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .form-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card {
+            background-color: white;
+            padding: 20px;
+            width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #2ecc71; /* Green accent */
+        }
+
+        .card label {
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        .card input, .card select {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .card input[type="radio"], .card input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .form-container .card:nth-child(odd) {
+            border-left-color: #2ecc71; /* Green accent */
+        }
+
+        button {
+            background-color: #2ecc71;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+        .output-box {
+            border: 1px solid #ced4da;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: #f1f3f4;
+            color: #202124;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #4285f4;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        async function submitForm() {
+            const id = document.getElementById("ID").value;
+            const codeGender = document.querySelector('input[name="CODE_GENDER"]:checked').value;
+            const flagOwnCar = document.getElementById("FLAG_OWN_CAR").checked ? 'Y' : 'N';
+            const flagOwnRealty = document.getElementById("FLAG_OWN_REALTY").checked ? 'Y' : 'N';
+            const cntChildren = document.getElementById("CNT_CHILDREN").value;
+            const amtIncomeTotal = document.getElementById("AMT_INCOME_TOTAL").value;
+            const nameIncomeType = document.getElementById("NAME_INCOME_TYPE").value;
+            const nameEducationType = document.getElementById("NAME_EDUCATION_TYPE").value;
+            const nameFamilyStatus = document.getElementById("NAME_FAMILY_STATUS").value;
+            const nameHousingType = document.getElementById("NAME_HOUSING_TYPE").value;
+            const daysBirth = Math.ceil(-Math.abs(new Date() - new Date(document.getElementById("DAYS_BIRTH").value)) / (1000 * 3600 * 24));
+            const daysEmployed = document.getElementById("DAYS_EMPLOYED").value * -1;
+            const flagMobil = document.getElementById("FLAG_MOBIL").value.trim() ? 1 : 0;
+            const flagWorkPhone = document.getElementById("FLAG_WORK_PHONE").value.trim() ? 1 : 0;
+            const flagPhone = document.getElementById("FLAG_PHONE").value.trim() ? 1 : 0;
+            const flagEmail = document.getElementById("FLAG_EMAIL").value.trim() ? 1 : 0;
+            const occupationType = document.getElementById("OCCUPATION_TYPE").value;
+            const cntFamMembers = document.getElementById("CNT_FAM_MEMBERS").value;
+            const outputText = document.getElementById('output-text');
+            const loadingSpinner = document.getElementById('loading-spinner');
+
+
+            const formData = {
+                "ID": id,
+                "CODE_GENDER": codeGender,
+                "FLAG_OWN_CAR": flagOwnCar,
+                "FLAG_OWN_REALTY": flagOwnRealty,
+                "CNT_CHILDREN": cntChildren,
+                "AMT_INCOME_TOTAL": amtIncomeTotal,
+                "NAME_INCOME_TYPE": nameIncomeType,
+                "NAME_EDUCATION_TYPE": nameEducationType,
+                "NAME_FAMILY_STATUS": nameFamilyStatus,
+                "NAME_HOUSING_TYPE": nameHousingType,
+                "DAYS_BIRTH": daysBirth,
+                "DAYS_EMPLOYED": daysEmployed,
+                "FLAG_MOBIL": flagMobil,
+                "FLAG_WORK_PHONE": flagWorkPhone,
+                "FLAG_PHONE": flagPhone,
+                "FLAG_EMAIL": flagEmail,
+                "OCCUPATION_TYPE": occupationType,
+                "CNT_FAM_MEMBERS": cntFamMembers
+            };
+            console.log(formData);
+
+            loadingSpinner.style.display = 'block';
+            outputText.style.display = 'none';
+            try {
+                const response = await fetch('http://localhost:9897/predict_risk', {
+                    mode: 'cors',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+
+                loadingSpinner.style.display = 'none';
+                outputText.style.display = 'block';
+                outputText.innerText = result.status;
+
+            } catch (e) {
+                console.error("Error:", e);
+                alert("Error submitting data: " + e.message);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Credit Card Application Form</h2>
+    <form onsubmit="event.preventDefault(); submitForm();">
+        <div class="form-container">
+            <div class="card">
+                <label for="ID">ID:</label>
+                <input type="text" id="ID" required><br><br>
+
+                <label>Code Gender:</label>
+                <input type="radio" id="M" name="CODE_GENDER" value="M" required> M
+                <input type="radio" id="F" name="CODE_GENDER" value="F"> F<br><br>
+
+                <label for="CNT_CHILDREN">Children:</label>
+                <input type="number" id="CNT_CHILDREN" min="0" required><br><br>
+
+                <label for="AMT_INCOME_TOTAL">Income Total:</label>
+                <input type="number" id="AMT_INCOME_TOTAL" min="0" step="0.01" required><br><br>
+                <label for="FLAG_WORK_PHONE">Work Number :</label>
+                <input type="text" id="FLAG_WORK_PHONE"><br><br>
+                <label for="FLAG_PHONE">Home Number :</label>
+                <input type="text" id="FLAG_PHONE"><br><br>
+                <label for="FLAG_EMAIL">Email Address:</label>
+                <input type="text" id="FLAG_EMAIL"><br><br>
+            </div>
+
+            <div class="card">
+                <label for="NAME_INCOME_TYPE">Income Type:</label>
+                <select id="NAME_INCOME_TYPE" required>
+                    <option value="Working">Working</option>
+                    <option value="Commercial associate">Commercial associate</option>
+                    <option value="Pensioner">Pensioner</option>
+                    <option value="State servant">State servant</option>
+                    <option value="Student">Student</option>
+                </select><br><br>
+
+                <label for="NAME_EDUCATION_TYPE">Education Type:</label>
+                <select id="NAME_EDUCATION_TYPE" required>
+                    <option value="Higher education">Higher education</option>
+                    <option value="Secondary / secondary special">Secondary / secondary special</option>
+                    <option value="Incomplete higher">Incomplete higher</option>
+                    <option value="Lower secondary">Lower secondary</option>
+                    <option value="Academic degree">Academic degree</option>
+                </select><br><br>
+
+                <label for="NAME_FAMILY_STATUS">Family Status:</label>
+                <select id="NAME_FAMILY_STATUS" required>
+                    <option value="Civil marriage">Civil marriage</option>
+                    <option value="Married">Married</option>
+                    <option value="Single / not married">Single / not married</option>
+                    <option value="Separated">Separated</option>
+                    <option value="Widow">Widow</option>
+                </select><br><br>
+
+                <label for="NAME_HOUSING_TYPE">Housing Type:</label>
+                <select id="NAME_HOUSING_TYPE" required>
+                    <option value="Rented apartment">Rented apartment</option>
+                    <option value="House / apartment">House / apartment</option>
+                    <option value="Municipal apartment">Municipal apartment</option>
+                    <option value="With parents">With parents</option>
+                    <option value="Co-op apartment">Co-op apartment</option>
+                    <option value="Office apartment">Office apartment</option>
+                </select><br><br>
+                <label for="FLAG_OWN_CAR">Own Car:</label>
+                <input type="checkbox" id="FLAG_OWN_CAR"><br><br>
+                
+                <label for="FLAG_OWN_REALTY">Own Realty:</label>
+                <input type="checkbox" id="FLAG_OWN_REALTY"><br><br>
+            </div>
+
+            <div class="card">
+                <label for="DAYS_BIRTH">Date of Birth:</label>
+                <input type="date" id="DAYS_BIRTH" required><br><br>
+
+                <label for="DAYS_EMPLOYED">Days Employed/Unemployed:</label>
+                <input type="number" id="DAYS_EMPLOYED" required><br><br>
+
+                <label for="FLAG_MOBIL">Phone Number (enter to indicate ownership):</label>
+                <input type="text" id="FLAG_MOBIL"><br><br>
+
+                <label for="OCCUPATION_TYPE">Occupation:</label>
+                <select id="OCCUPATION_TYPE" required>
+                    <option value="Laborers">Laborers</option>
+                    <option value="Managers">Managers</option>
+                    <option value="Core staff">Core staff</option>
+                    <option value="High skill tech staff">High skill tech staff</option>
+                    <option value="Sales staff">Sales staff</option>
+                    <option value="Accountants">Accountants</option>
+                    <option value="Cleaning staff">Cleaning staff</option>
+                    <option value="Cooking staff">Cooking staff</option>
+                    <option value="Security staff">Security staff</option>
+                    <option value="IT staff">IT staff</option>
+                </select><br><br>
+
+                <label for="CNT_FAM_MEMBERS">Family Members:</label>
+                <input type="number" id="CNT_FAM_MEMBERS" required><br><br>
+
+                <button type="submit">Submit</button>
+
+                <div id="loading-spinner" class="loading-spinner"></div>
+
+                <div id="output-text" class="output-box" style="display:none;"></div>
+            </div>
+        </div>
+    </form>
+    
+</body>
+</html>
+                
