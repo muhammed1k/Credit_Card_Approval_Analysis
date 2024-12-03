@@ -59,27 +59,26 @@ cd applicant-credit-risk-prediction
 ```
 
 #### 2. **Running The Notebook**
-1. 
+1. install requirements
 ```bash
    pip install requirements.txt
    ```
-2.
+2. run jupyter notebook
 ```bash
     install python
     pip install jupyter-notebook
     use jupyter Notebooks Server to load and run the notebook cells
    ```
 #### 3. **Running python Files Without Docker**
-1. 
+1. install requirements
 ```bash
    pip install requirements.txt
    ```
-2.
+2. run in cmd commands
 ```bash
    cd backend
    python main.py
    ```
-3.
 ```bash
    cd frontend
    python -m http.server 3000
