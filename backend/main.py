@@ -61,7 +61,7 @@ def main(train_model=False,output_path=None,input_path=None,file_names=None):
         risk_predictor.load_model(Path(output_path))
         print('Predicting Risk')
 
-        probability,risk = risk_predictor.run_inference(X)
+        probability,risk = risk_predictor.run_inference(X.values)
         
         if risk == 'Low Risk':
             status = 'Accepted'
@@ -93,4 +93,4 @@ if __name__ == '__main__':
     app.run(host='localhost',port=9897,debug=True)
 
 else:
-    main(input_path=config.input_path,output_path=config.output_path,file_names=config.file_names)
+    main(input_path=config['input_path'],output_path=config['output_path'],file_names=config['file_names'])

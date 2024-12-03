@@ -2,6 +2,7 @@ from config import *
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler,MinMaxScaler,OneHotEncoder
 import joblib
+import numpy as np
 
 def Prepare_DATA(application_details,application_history,inference=False):
     copy = application_details.copy()
