@@ -93,4 +93,4 @@ if __name__ == '__main__':
     app.run(host='localhost',port=9897,debug=True)
 
 else:
-    main()
+    main(input_path=config.input_path,output_path=config.output_path,file_names=config.file_names)
