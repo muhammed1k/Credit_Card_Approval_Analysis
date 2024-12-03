@@ -83,7 +83,7 @@ cd applicant-credit-risk-prediction
    cd frontend
    python -m http.server 3000
    ```
-4. **Run Locally**  
+3. **Run Locally**  
    Visit the following:
    - Backend API: `http://localhost:9897`
    - Frontend: `http://localhost:3000`
